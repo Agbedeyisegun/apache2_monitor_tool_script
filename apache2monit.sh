@@ -4,8 +4,14 @@ date=$(date +%Y%m%d%H%M)
 
  echo "+++++++++++++++++++$date++++++++++++++++++++++++++"
 
+	mkdir -p /tmp/apache2/
+
+	sudo touch /tmp/apache2/monitlog.txt
+	sudo echo $(date +%Y%m%d%H%M) >> /tmp/apache2/monitlog.txt
+	
 	sudo apt update  &>> /dev/null
-	sudo apt install apache2 -y  &> /dev/null
+	
+	sudo apt install apache2 -y  &>> /tmp/apache2/monitlog.txt
 
 if [[ $? -eq 0 ]]; then 
 	
@@ -13,13 +19,10 @@ if [[ $? -eq 0 ]]; then
 	
 	echo 	
 	
-	mkdir -p /tmp/apache2/
-
-	touch /tmp/apache2/monitlog-$(date).txt
 
 	#echo "Below is the process id"
 	
-	cat /var/run/apache2/apache2.pid &> /dev/null
+	cat /var/run/apache2/apache2.pid &>> /tmp/apache2/monitlog.txt
 	
 	if [[ $? -eq 0 ]]; then 
 		echo "apache2 is running and active"
@@ -31,8 +34,7 @@ if [[ $? -eq 0 ]]; then
 		
 		sudo systemctl restart apache2
 		echo 
-#		sudo systemctl enable apache2 # &> /tmp/apache2/monitlog-$(date).txt
-		sudo systemctl enable apache2 &> /tmp/apache2/monitlog-$(date +%Y%m%d%H%M).txt 
+		sudo systemctl enable apache2 &>> /tmp/apache2/monitlog.txt 
 		
 		echo
 		echo "apache services started succcefully"
@@ -46,8 +48,8 @@ else
 	echo "apache installing ---->>"	
 	sleep 2
 	
-	sudo install apache2 -y &> /dev/null
-	
+	sudo install apache2 -y &>> /tmp/apache2/monitlog.txt
+
 	echo "system is installing apache2 now"
 		
 	sleep 2
@@ -57,5 +59,4 @@ else
 	echo
 fi
 
-	     
-
+	
